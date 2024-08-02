@@ -7,7 +7,8 @@ public class Understandability_Metric {
     private String worst;
 
     public Understandability_Metric() {
-
+        best = null;
+        worst = null;
     }
 
     public String getBest() {

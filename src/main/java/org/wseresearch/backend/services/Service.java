@@ -77,7 +77,7 @@ public class Service {
     }
 
     public void storeUnderstandabilityEntry(String id, String tuple, Understandability_Metric understandabilityMetric) {
-        ExperimentsDTO experimentsDTO = this.experimentsRepository.findById(id).get();
+        ExperimentsDTO experimentsDTO = this.findExperimentsByUser(id);
         experimentsDTO.setUnderstandabilityExperiment(tuple,understandabilityMetric);
         this.experimentsRepository.save(experimentsDTO);
     }
