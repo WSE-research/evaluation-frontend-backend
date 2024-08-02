@@ -6,7 +6,7 @@
       "tag": "latest",
       "port": "40154:4000",
       "files": {
-        ".env": "env"
+        ".env": ".env"
       }
     }
   ]
