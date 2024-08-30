@@ -54,10 +54,10 @@ public class Controller {
         }
     }
 
-    @PostMapping(value = "/storeunderstandability/{id}/{tuple}", consumes = "application/json")
-    public ResponseEntity<?> storeUnderstandability(@PathVariable String id, @PathVariable String tuple, @RequestBody Understandability_Metric understandabilityMetric) {
+    @PostMapping(value = "/storeunderstandability/{temperature}/{id}/{tuple}", consumes = "application/json")
+    public ResponseEntity<?> storeUnderstandability(@PathVariable String temperature, @PathVariable String id, @PathVariable String tuple, @RequestBody Understandability_Metric understandabilityMetric) {
         try {
-            service.storeUnderstandabilityEntry(id, tuple, understandabilityMetric);
+            service.storeUnderstandabilityEntry(temperature, id, tuple, understandabilityMetric);
             return new ResponseEntity<>("Entry updated successfully", HttpStatus.OK);
         } catch(Exception e) {
             return new ResponseEntity<>("Failed to update entry", HttpStatus.INTERNAL_SERVER_ERROR);

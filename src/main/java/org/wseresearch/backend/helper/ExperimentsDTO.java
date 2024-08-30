@@ -11,12 +11,12 @@ public class ExperimentsDTO {
     @Id
     private String id;
     private Map<String, Integer> correctnessExperiments; // Hash, errors
-    private Map<String, Understandability_Metric> understandabilityExperiments; // Tuple, {best,worst}
+    private Map<String, Map<String,Understandability_Metric>> understandabilityExperiments; // Tuple, {best,worst}
 
     public ExperimentsDTO() {
     }
 
-    public ExperimentsDTO(String id, Map<String, Integer> correctnessExperiments, Map<String, Understandability_Metric> understandabilityExperiments) {
+    public ExperimentsDTO(String id, Map<String, Integer> correctnessExperiments, Map<String, Map<String,Understandability_Metric>> understandabilityExperiments) {
         this.id = id;
         this.correctnessExperiments = correctnessExperiments;
         this.understandabilityExperiments = understandabilityExperiments;
@@ -26,7 +26,7 @@ public class ExperimentsDTO {
         return correctnessExperiments;
     }
 
-    public Map<String, Understandability_Metric> getUnderstandabilityExperiments() {
+    public Map<String, Map<String,Understandability_Metric>> getUnderstandabilityExperiments() {
         return understandabilityExperiments;
     }
 
@@ -38,11 +38,11 @@ public class ExperimentsDTO {
         this.correctnessExperiments.replace(hash, errors);
     }
 
-    public void setUnderstandabilityExperiment(String tuple, Understandability_Metric understandabilityMetric) {
-        this.understandabilityExperiments.replace(tuple, understandabilityMetric);
+    public void setUnderstandabilityExperiment(String temperature, String tuple, Understandability_Metric understandabilityMetric) {
+        this.understandabilityExperiments.get(temperature).replace(tuple, understandabilityMetric);
     }
 
-    public void setUnderstandabilityExperiments(Map<String, Understandability_Metric> understandabilityExperiments) {
+    public void setUnderstandabilityExperiments(Map<String, Map<String,Understandability_Metric>> understandabilityExperiments) {
         this.understandabilityExperiments = understandabilityExperiments;
     }
 

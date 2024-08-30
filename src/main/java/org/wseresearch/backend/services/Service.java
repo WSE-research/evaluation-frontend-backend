@@ -7,11 +7,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.transaction.TransactionSystemException;
 import org.wseresearch.backend.helper.*;
 import org.wseresearch.backend.repositories.ExperimentsRepository;
 
 @org.springframework.stereotype.Service
-public class Service {
+public class    Service {
 
     @Autowired
     private ExperimentsRepository experimentsRepository;
@@ -45,7 +47,7 @@ public class Service {
 
     public ExperimentsDTO createUser() {
         String id = UUID.randomUUID().toString();
-        ExperimentsDTO experimentsDTO = new ExperimentsDTO(id, correctnessExperiments, understandabilityExperiments);
+        ExperimentsDTO experimentsDTO = new ExperimentsDTO(id, correctnessExperiments, /*understandabilityExperiments*/null);//TODO!
         try {
             experimentsRepository.insert(experimentsDTO);
         } catch(Exception e) {
@@ -62,6 +64,7 @@ public class Service {
         return experimentsRepository.existsById(id);
     }
 
+    // TODO!
     private Map<String, Understandability_Metric> initUnderstandabilityExperiments(String experiment) throws IOException {
         Map<String, Understandability_Metric> understandabilityExperiments = new HashMap<>();
         try(InputStream inputStream = new ClassPathResource(experiment).getInputStream()) {
@@ -76,10 +79,25 @@ public class Service {
         return understandabilityExperiments;
     }
 
-    public void storeUnderstandabilityEntry(String id, String tuple, Understandability_Metric understandabilityMetric) {
+
+    public void storeUnderstandabilityEntry(String temperature, String id, String tuple, Understandability_Metric understandabilityMetric) {
         ExperimentsDTO experimentsDTO = this.findExperimentsByUser(id);
-        experimentsDTO.setUnderstandabilityExperiment(tuple,understandabilityMetric);
-        this.experimentsRepository.save(experimentsDTO);
+        experimentsDTO.setUnderstandabilityExperiment(temperature, tuple, understandabilityMetric);
+        try {
+            // Assuming savedEntity is the          result of the save operation
+            ExperimentsDTO savedEntity = experimentsRepository.save(experimentsDTO);
+            if (savedEntity != null && savedEntity.getId() != null) {
+                logger.info("Save operation was successful.");
+            } else {
+                logger.info("Save operation might have failed or the entity doesn't get its ID generated upon saving.");
+            }
+        } catch (DataIntegrityViolationException e) {
+            logger.error("Data integrity violation while saving the entity: " + e.getMessage());
+        } catch (TransactionSystemException e) {
+            logger.error("Transaction system exception while saving the entity: " + e.getMessage());
+        } catch (Exception e) {
+            logger.error("An unexpected error occurred while saving the entity: " + e.getMessage());
+        }
     }
 
     private Map<String, Integer> initCorrectnessExperiments(String experiment) throws IOException {
